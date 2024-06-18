@@ -2,3 +2,6 @@ name = "github-contents-worker"
 main = "src/index.ts"
 compatibility_date = "2024-05-24"
 workers_dev = true
+routes = [
+    { pattern = "github.actionschema.com", custom_domain = true }
+]
