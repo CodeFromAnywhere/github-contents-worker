@@ -1,0 +1,144 @@
+{
+  "x-actionschema": "0.0.1",
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/openapi.schema.json",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "GitHub Repository Fetcher",
+    "description": "An API to fetch and unzip files from a GitHub repository.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://github-contents-worker.actionschema.workers.dev",
+      "description": "Default server"
+    }
+  ],
+  "paths": {
+    "/{owner}/{repo}/{branch}": {
+      "get": {
+        "summary": "Fetch and unzip files from a GitHub repository",
+        "description": "Fetches the specified branch of the given repository owned by the specified owner, unzips the files, and returns their contents.",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "GitHub repository owner"
+          },
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "GitHub repository name"
+          },
+          {
+            "name": "branch",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "GitHub repository branch"
+          },
+          {
+            "name": "include-ext",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of file extensions to include"
+          },
+          {
+            "name": "exclude-ext",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of file extensions to exclude"
+          },
+          {
+            "name": "exclude-dir",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of directories to exclude"
+          },
+          {
+            "name": "accept",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Accept header, use \"application/json\" for JSON response"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Keys are file paths prefixed with {repo}/{branch}/. Values are the file contents.",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "302": {
+            "description": "Redirect to the main branch"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
